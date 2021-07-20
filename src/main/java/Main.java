@@ -3,6 +3,8 @@ import java.util.*;
 import java.lang.Math;
 
 import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
+import org.biojava.nbio.core.sequence.AccessionID;
+import org.biojava.nbio.core.sequence.io.FastaWriterHelper;
 import picocli.CommandLine;
 import org.biojava.nbio.core.sequence.DNASequence;
 import org.biojava.nbio.core.sequence.io.FastaReaderHelper;
@@ -12,10 +14,10 @@ public class Main implements Runnable{
     @CommandLine.Option(names={"-i", "--inFile"}, description="input fasta file with viral sequences to be mutated",
             paramLabel = "FILE", required=true)
     private File inputFile;
-    @CommandLine.Option(names={"-o", "--outFolder"},
-            description="folder for output fasta files with mutated sequences (default: file's base name)",
+    @CommandLine.Option(names={"-o", "--outFile"},
+            description="fasta file with mutated sequences (default: \"<inFile base>\"Mut.fasta\")",
             paramLabel = "<outputFolder>")
-    private File outputFolder;
+    private File outputFile;
     @CommandLine.Option(names={"-m", "--mutation-rate"},
             description="mutation rate in substitutions per nucleotide per year (s/n/y) (default: 4.1e-3)",
             paramLabel = "m")
@@ -37,9 +39,15 @@ public class Main implements Runnable{
             nuc_mut_prob = Math.pow(1+rate,years) - 1;
             LinkedHashMap<String, DNASequence> seqs = FastaReaderHelper.readFastaDNASequence(inputFile);
             Set<String> seq_names = seqs.keySet();
-            for (String seq_name : seq_names) {
-                LinkedHashMap<String, DNASequence> out_seqs = mutate_seqs(seqs.get(seq_name));
+            LinkedHashSet<DNASequence> out_seqs = new LinkedHashSet<>();
+            if(outputFile == null) {
+                String[] tokens = inputFile.toString().split("\\.(?=[^\\.]+$)");
+                outputFile = new File(String.format("%sMut.%s",tokens[0],tokens[1]));
             }
+            for (String seq_name : seq_names) {
+                 out_seqs.addAll(mutate_seqs(seqs.get(seq_name), seq_name));
+            }
+            FastaWriterHelper.writeNucleotideSequence(outputFile, out_seqs);
         }
         catch(Exception e) {
             e.printStackTrace();
@@ -50,10 +58,13 @@ public class Main implements Runnable{
         CommandLine.run(new Main(), System.out, args);
     }
 
-    private LinkedHashMap<String, DNASequence> mutate_seqs(DNASequence seq) throws CompoundNotFoundException {
-        LinkedHashMap<String, DNASequence> out_seqs = new LinkedHashMap<>();
+    private LinkedHashSet<DNASequence> mutate_seqs(DNASequence seq, String seq_name)
+            throws CompoundNotFoundException {
+        LinkedHashSet<DNASequence> out_seqs = new LinkedHashSet<>();
         for(int i=0; i<n; i++) {
             DNASequence mut_seq = mutate_seq(seq);
+            mut_seq.setAccession(new AccessionID(String.format("%s_%d",seq_name,i)));
+            out_seqs.add(mut_seq);
         }
         return out_seqs;
     }
@@ -70,7 +81,6 @@ public class Main implements Runnable{
             if (nuc == mut_nuc) nuc = nucs.get(3);
             mut_seq.append(nuc);
         }
-        System.out.println(mut_seq);
         return new DNASequence(mut_seq.toString());
     }
 }
