@@ -35,16 +35,14 @@
                 <!-- Build an executable JAR -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.0.2</version>
                 <configuration>
-                    <finalName>dunes</finalName>
                     <archive>
                         <manifest>
-                            <addClasspath>true</addClasspath>
                             <mainClass>Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
+                <version>3.0.2</version>
             </plugin>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -54,6 +52,7 @@
                             <mainClass>Main</mainClass>
                         </manifest>
                     </archive>
+                    <finalName>dunes</finalName>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
