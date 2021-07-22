@@ -7,7 +7,10 @@ import org.biojava.nbio.core.sequence.AccessionID;
 import org.biojava.nbio.core.sequence.io.FastaWriterHelper;
 import picocli.CommandLine;
 import org.biojava.nbio.core.sequence.DNASequence;
-import org.biojava.nbio.core.sequence.io.FastaReaderHelper;
+import org.biojava.nbio.core.sequence.io.DNASequenceCreator;
+import org.biojava.nbio.core.sequence.compound.AmbiguityDNACompoundSet; 
+import org.biojava.nbio.core.sequence.io.FastaReader;
+import org.biojava.nbio.core.sequence.io.GenericFastaHeaderParser;
 
 @CommandLine.Command(name = "dunes", mixinStandardHelpOptions = true, version = "0.0")
 public class Main implements Runnable{
@@ -37,7 +40,11 @@ public class Main implements Runnable{
     public void run() {
         try {
             nuc_mut_prob = Math.pow(1+rate,years) - 1;
-            LinkedHashMap<String, DNASequence> seqs = FastaReaderHelper.readFastaDNASequence(inputFile);
+            AmbiguityDNACompoundSet ambiguityDNACompoundSet = AmbiguityDNACompoundSet.getDNACompoundSet();
+            DNASequenceCreator ambigDNASequenceCreator = new DNASequenceCreator(ambiguityDNACompoundSet);
+            GenericFastaHeaderParser fastaHeaderParser = new GenericFastaHeaderParser();
+            FastaReader fastaReader = new FastaReader(inputFile, fastaHeaderParser, ambigDNASequenceCreator);
+            LinkedHashMap<String, DNASequence> seqs = fastaReader.process(); 
             Set<String> seq_names = seqs.keySet();
             LinkedHashSet<DNASequence> out_seqs = new LinkedHashSet<>();
             if(outputFile == null) {
@@ -81,6 +88,6 @@ public class Main implements Runnable{
             if (nuc == mut_nuc) nuc = nucs.get(3);
             mut_seq.append(nuc);
         }
-        return new DNASequence(mut_seq.toString());
+        return new DNASequence(mut_seq.toString(), AmbiguityDNACompoundSet.getDNACompoundSet());
     }
 }
