@@ -1,7 +1,4 @@
 # DUNES
-
-![DUNES](https://github.com/Sergey-Knyazev/dunes/blob/master/DUNES%20icon_2.svg)
-
 A command line tool for introducing random mutations into DNA sequences.
 
 ## Download or Compilation
@@ -37,3 +34,4 @@ Usage: dunes [-hV] -i=FILE [-m=m] [-n=n] [-o=<outputFolder>] [-y=y]
   -V, --version            Print version information and exit.
   -y, --years=y            years of evolution (default: 1)
 ```
+![DUNES](https://github.com/Sergey-Knyazev/dunes/blob/master/DUNES%20icon_2.svg)
