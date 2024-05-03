@@ -1,6 +1,6 @@
 # DUNES
 
-[DUNES](https://github.com/Sergey-Knyazev/dunes/blob/master/DUNES%20icon_2.svg)
+![DUNES](https://github.com/Sergey-Knyazev/dunes/blob/master/DUNES%20icon_2.svg)
 
 A command line tool for introducing random mutations into DNA sequences.
 
