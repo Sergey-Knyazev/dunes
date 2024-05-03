@@ -30,7 +30,7 @@ Usage: dunes [-hV] -i=FILE [-m=m] [-n=n] [-o=<outputFolder>] [-y=y]
   -n, --mutants-number=n   number of mutants for a strain (default: 1)
   -o, --outFile=<outputFolder>
                            fasta file with mutated sequences (default: "<inFile
-                             base>"Mut.fasta")
+                             baseMut.fasta>")
   -V, --version            Print version information and exit.
   -y, --years=y            years of evolution (default: 1)
 ```
